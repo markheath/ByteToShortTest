@@ -62,6 +62,14 @@ namespace ByteToShortTest
             CompareFinders(bitConverter, waveBuffer);
         }
 
+        [Test]
+        public void UnsafeBufferReturnsSamePeaksAsBitConverter()
+        {
+            var bitConverter = new BitConverterPeakFinder();
+            var unsafeBuffer = new UnsafePeakFinder();
+            CompareFinders(bitConverter, unsafeBuffer);
+        }
+
         private void CompareFinders(IPeakFinder firstFinder, IPeakFinder secondFinder)
         {
             var readBuffer = new byte[reader.WaveFormat.AverageBytesPerSecond * 4];
@@ -94,6 +102,12 @@ namespace ByteToShortTest
         public void TestWaveBuffer()
         {
             GeneratePeaks(4, new WaveBufferPeakFinder());
+        }
+
+        [Test]
+        public void TestUnsafe()
+        {
+            GeneratePeaks(4, new UnsafePeakFinder());
         }
 
         private void GeneratePeaks(int secondsPerRead, IPeakFinder peakFinder)
