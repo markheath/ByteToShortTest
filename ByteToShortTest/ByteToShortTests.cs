@@ -38,19 +38,38 @@ namespace ByteToShortTest
 
 
         [Test]
-        public void BitConvertersReturnSamePeaks()
+        public void BitManipulatorReturnsSamePeaksAsBitConverter()
+        {
+            var bitConverter = new BitConverterPeakFinder();
+            var bitManipulator = new BitManipulationPeakFinder();
+            CompareFinders(bitConverter, bitManipulator);
+        }
+
+
+        [Test]
+        public void BlockCopyReturnsSamePeaksAsBitConverter()
+        {
+            var bitConverter = new BitConverterPeakFinder();
+            var blockCopy = new BlockCopyPeakFinder();
+            CompareFinders(bitConverter, blockCopy);
+        }
+
+        [Test]
+        public void WaveBufferReturnsSamePeaksAsBitConverter()
+        {
+            var bitConverter = new BitConverterPeakFinder();
+            var waveBuffer = new WaveBufferPeakFinder();
+            CompareFinders(bitConverter, waveBuffer);
+        }
+
+        private void CompareFinders(IPeakFinder firstFinder, IPeakFinder secondFinder)
         {
             var readBuffer = new byte[reader.WaveFormat.AverageBytesPerSecond * 4];
             var read = reader.Read(readBuffer, 0, readBuffer.Length);
-            var bitConverter = new BitConverterPeakFinder();
-            var bitManipulator = new BitManipulationPeakFinder();
-            var blockCopy = new BlockCopyPeakFinder();
             var samplesPerPeak = 44100 / 10;
-            var bitConverterPeaks = bitConverter.FindPeaks(readBuffer, read, samplesPerPeak);
-            var bitManipulatorPeaks = bitManipulator.FindPeaks(readBuffer, read, samplesPerPeak);
-            var blockCopyPeaks = blockCopy.FindPeaks(readBuffer, read, samplesPerPeak);
-            Assert.AreEqual(bitConverterPeaks, bitManipulatorPeaks, "BitManipulator peaks don't match bit converter");
-            Assert.AreEqual(bitConverterPeaks, blockCopyPeaks, "BlockCopy peaks don't match bit converter");
+            var firstPeaks = firstFinder.FindPeaks(readBuffer, read, samplesPerPeak);
+            var secondPeaks = secondFinder.FindPeaks(readBuffer, read, samplesPerPeak);
+            Assert.AreEqual(firstPeaks, secondPeaks, String.Format("peaks from {0} don't match peaks from {1}", firstFinder.GetType().Name, secondFinder.GetType().Name));
         }
 
         [Test]
@@ -69,6 +88,12 @@ namespace ByteToShortTest
         public void TestBlockCopy()
         {
             GeneratePeaks(4, new BlockCopyPeakFinder());
+        }
+
+        [Test]
+        public void TestWaveBuffer()
+        {
+            GeneratePeaks(4, new WaveBufferPeakFinder());
         }
 
         private void GeneratePeaks(int secondsPerRead, IPeakFinder peakFinder)

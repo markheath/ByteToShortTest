@@ -52,6 +52,7 @@
     <Compile Include="ByteToShortTests.cs" />
     <Compile Include="IPeakFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WaveBufferPeakFinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
