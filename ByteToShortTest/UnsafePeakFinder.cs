@@ -6,29 +6,32 @@ namespace ByteToShortTest
     {
         private short[] peakBuffer; // only create one to avoid garbage collection
 
-        public unsafe short[] FindPeaks(byte[] samples, int bytes, int samplesPerPeak)
+        public short[] FindPeaks(byte[] samples, int bytes, int samplesPerPeak)
         {
             if (peakBuffer == null) peakBuffer = new short[bytes / (2 * samplesPerPeak) + 1];
             var peakOffset = 0;
             var inputSamples = bytes / 2;
             short currentMax = 0;
             var sample = 0;
-            fixed (byte* pSamples = samples)
+            unsafe
             {
-                var psSamples = (short*) pSamples; // for some reason won't let us do this in one step
-                while (sample < inputSamples)
+                fixed (byte* pSamples = samples)
                 {
-                    currentMax = Math.Max(psSamples[sample], currentMax);
-                    sample++;
-                    if (sample % samplesPerPeak == 0)
+                    var psSamples = (short*)pSamples; // for some reason won't let us do this in one step
+                    while (sample < inputSamples)
                     {
-                        peakBuffer[peakOffset++] = currentMax;
-                        currentMax = 0;
+                        currentMax = Math.Max(psSamples[sample], currentMax);
+                        sample++;
+                        if (sample % samplesPerPeak == 0)
+                        {
+                            peakBuffer[peakOffset++] = currentMax;
+                            currentMax = 0;
+                        }
                     }
+
                 }
-                
+                return peakBuffer;
             }
-            return peakBuffer;
         }
     }
 }
