@@ -46,7 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitConverterPeakFinder.cs" />
+    <Compile Include="BitManipulationPeakFinder.cs" />
+    <Compile Include="BlockCopyPeakFinder.cs" />
     <Compile Include="ByteToShortTests.cs" />
+    <Compile Include="IPeakFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
